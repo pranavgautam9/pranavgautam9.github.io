@@ -63,23 +63,53 @@ const sections = document.querySelectorAll('section[id]');
 
 function activateNavLink() {
     const scrollY = window.pageYOffset;
+    const navHeight = navbar.offsetHeight;
+    
+    // Find the section that's currently most visible
+    let currentSection = '';
+    let maxVisibility = 0;
     
     sections.forEach(section => {
+        const sectionTop = section.offsetTop - navHeight - 50;
         const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
+        const sectionBottom = sectionTop + sectionHeight;
         const sectionId = section.getAttribute('id');
-        const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
         
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLinks.forEach(link => link.classList.remove('active'));
-            if (navLink) {
-                navLink.classList.add('active');
+        // Calculate how much of the section is visible
+        const visibleTop = Math.max(scrollY, sectionTop);
+        const visibleBottom = Math.min(scrollY + window.innerHeight, sectionBottom);
+        const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+        const visibility = visibleHeight / sectionHeight;
+        
+        // If this section is more visible than the current one, or if we're past its bottom
+        if (visibility > maxVisibility || (scrollY >= sectionTop && scrollY < sectionBottom)) {
+            if (scrollY >= sectionTop - 100) {
+                currentSection = sectionId;
+                maxVisibility = Math.max(maxVisibility, visibility);
             }
+        }
+    });
+    
+    // If we're at the bottom of the page, activate the last section
+    if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 50) {
+        const lastSection = sections[sections.length - 1];
+        if (lastSection) {
+            currentSection = lastSection.getAttribute('id');
+        }
+    }
+    
+    // Update active state
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+            link.classList.add('active');
         }
     });
 }
 
 window.addEventListener('scroll', activateNavLink);
+// Also activate on page load
+activateNavLink();
 
 // ===== Experience Tabs =====
 const tabButtons = document.querySelectorAll('.tab-button');

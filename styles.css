@@ -358,7 +358,7 @@ body {
 
 /* ===== Common Section Styles ===== */
 section {
-    padding: 100px 0;
+    padding: 60px 0;
     min-height: auto;
 }
 
@@ -1030,7 +1030,7 @@ section {
     }
 
     section {
-        padding: 80px 0;
+        padding: 50px 0;
     }
 
     .about-content {
@@ -1048,9 +1048,11 @@ section {
     .experience-tabs {
         flex-direction: row;
         overflow-x: auto;
+        overflow-y: hidden;
         border-left: none;
         border-bottom: 2px solid var(--lightest-navy);
         margin-bottom: 30px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .tab-button {
@@ -1080,6 +1082,43 @@ section {
 
     .skills-content {
         grid-template-columns: 1fr;
+    }
+
+    /* Mobile image click behavior - remove grayscale on active */
+    .about-photo.active,
+    .project-img.active,
+    .project-img-small.active {
+        filter: grayscale(0%) !important;
+    }
+
+    /* Disable hover effects on mobile */
+    .about-photo:hover {
+        filter: grayscale(100%);
+        transform: none;
+    }
+
+    .featured-project:hover .project-img {
+        filter: grayscale(100%);
+    }
+
+    .project-card-small:hover .project-img-small {
+        filter: grayscale(100%);
+    }
+
+    /* Make project icons bigger on mobile */
+    .project-link svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .project-links-small .project-link svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Hide extra description on mobile for TechScope Daily */
+    .project-description-extra {
+        display: none;
     }
 }
 

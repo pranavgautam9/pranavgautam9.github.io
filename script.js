@@ -210,7 +210,67 @@ function validateEmail(email) {
     return re.test(email);
 }
 
+// ===== Mobile Image Click Behavior =====
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+function resetAllImages() {
+    const images = document.querySelectorAll('.about-photo, .project-img, .project-img-small');
+    images.forEach(img => img.classList.remove('active'));
+}
+
+// Handle image clicks on mobile
+function setupMobileImageBehavior() {
+    if (!isMobile()) return;
+
+    const images = document.querySelectorAll('.about-photo, .project-img, .project-img-small');
+    
+    images.forEach(img => {
+        img.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Remove active from all images
+            resetAllImages();
+            
+            // Add active to clicked image
+            this.classList.add('active');
+        });
+
+        // Prevent touch events on image from resetting
+        img.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    // Reset images immediately when touching outside (for scrolling)
+    document.addEventListener('touchstart', function(e) {
+        if (!e.target.closest('.about-photo, .project-img, .project-img-small')) {
+            resetAllImages();
+        }
+    }, { passive: true });
+
+    // Reset images when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.about-photo, .project-img, .project-img-small')) {
+            resetAllImages();
+        }
+    });
+
+    // Reset images on scroll (fallback)
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            resetAllImages();
+        }, 100);
+    }, { passive: true });
+}
+
+// Initialize on load and resize
+setupMobileImageBehavior();
+window.addEventListener('resize', setupMobileImageBehavior);
+
 // ===== Console Message =====
 console.log('%c👋 Hello! Thanks for checking out my portfolio.', 'color: #64ffda; font-size: 16px; font-weight: bold;');
-console.log('%cBuilt with ❤️ by Pranav Gautam', 'color: #8892b0; font-size: 12px;');
 

@@ -216,54 +216,91 @@ function isMobile() {
 }
 
 function resetAllImages() {
-    const images = document.querySelectorAll('.about-photo, .project-img, .project-img-small');
-    images.forEach(img => img.classList.remove('active'));
+    const wrappers = document.querySelectorAll('.image-wrapper, .project-image, .project-image-small');
+    wrappers.forEach(wrapper => wrapper.classList.remove('active'));
 }
 
 // Handle image clicks on mobile
 function setupMobileImageBehavior() {
     if (!isMobile()) return;
 
+    const wrappers = document.querySelectorAll('.image-wrapper, .project-image, .project-image-small');
     const images = document.querySelectorAll('.about-photo, .project-img, .project-img-small');
     
+    // Handle clicks on images
     images.forEach(img => {
         img.addEventListener('click', function(e) {
             e.stopPropagation();
             
-            // Remove active from all images
+            // Remove active from all wrappers
             resetAllImages();
             
-            // Add active to clicked image
-            this.classList.add('active');
+            // Find the wrapper and add active class
+            const wrapper = this.closest('.image-wrapper, .project-image, .project-image-small');
+            if (wrapper) {
+                wrapper.classList.add('active');
+            }
         });
+    });
 
-        // Prevent touch events on image from resetting
-        img.addEventListener('touchstart', function(e) {
+    // Handle clicks on wrappers (in case user clicks the wrapper itself)
+    wrappers.forEach(wrapper => {
+        wrapper.addEventListener('click', function(e) {
             e.stopPropagation();
+            
+            // Remove active from all wrappers
+            resetAllImages();
+            
+            // Add active to clicked wrapper
+            this.classList.add('active');
         });
     });
 
     // Reset images immediately when touching outside (for scrolling)
+    // Use capture phase to catch all touches before they bubble
     document.addEventListener('touchstart', function(e) {
-        if (!e.target.closest('.about-photo, .project-img, .project-img-small')) {
+        const target = e.target;
+        const isImage = target.classList.contains('about-photo') || 
+                       target.classList.contains('project-img') || 
+                       target.classList.contains('project-img-small');
+        const isWrapper = target.classList.contains('image-wrapper') || 
+                         target.classList.contains('project-image') || 
+                         target.classList.contains('project-image-small');
+        const isInsideImage = target.closest('.about-photo, .project-img, .project-img-small');
+        const isInsideWrapper = target.closest('.image-wrapper, .project-image, .project-image-small');
+        
+        // Only reset if NOT touching an image or wrapper (or anything inside them)
+        if (!isImage && !isWrapper && !isInsideImage && !isInsideWrapper) {
+            resetAllImages();
+        }
+    }, { passive: true, capture: true });
+
+    // Reset images when touchmove starts (scrolling begins)
+    document.addEventListener('touchmove', function(e) {
+        const target = e.target;
+        const isImage = target.closest('.about-photo, .project-img, .project-img-small');
+        const isWrapper = target.closest('.image-wrapper, .project-image, .project-image-small');
+        
+        // If scrolling and not on an image/wrapper, reset immediately
+        if (!isImage && !isWrapper) {
             resetAllImages();
         }
     }, { passive: true });
 
     // Reset images when clicking outside
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.about-photo, .project-img, .project-img-small')) {
+        const target = e.target;
+        const isImage = target.closest('.about-photo, .project-img, .project-img-small');
+        const isWrapper = target.closest('.image-wrapper, .project-image, .project-image-small');
+        
+        if (!isImage && !isWrapper) {
             resetAllImages();
         }
     });
 
-    // Reset images on scroll (fallback)
-    let scrollTimeout;
+    // Reset images on scroll (immediate reset)
     window.addEventListener('scroll', function() {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            resetAllImages();
-        }, 100);
+        resetAllImages();
     }, { passive: true });
 }
 

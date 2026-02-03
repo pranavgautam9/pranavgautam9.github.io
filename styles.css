@@ -850,6 +850,15 @@ section {
     box-shadow: 0 10px 30px -15px var(--navy-shadow);
 }
 
+/* Default: show desktop version, hide mobile version */
+.project-description-desktop {
+    display: block;
+}
+
+.project-description-mobile {
+    display: none;
+}
+
 .project-tech {
     display: flex;
     flex-wrap: wrap;
@@ -1160,6 +1169,15 @@ section {
     /* Hide extra description on mobile for TechScope Daily */
     .project-description-extra {
         display: none;
+    }
+
+    /* Show mobile version, hide desktop version on mobile */
+    .project-description-desktop {
+        display: none;
+    }
+
+    .project-description-mobile {
+        display: block;
     }
 }
 

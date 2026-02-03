@@ -851,11 +851,11 @@ section {
 }
 
 /* Default: show desktop version, hide mobile version */
-.project-description-desktop {
+.project-description.project-description-desktop {
     display: block;
 }
 
-.project-description-mobile {
+.project-description.project-description-mobile {
     display: none;
 }
 
@@ -1172,12 +1172,12 @@ section {
     }
 
     /* Show mobile version, hide desktop version on mobile */
-    .project-description-desktop {
-        display: none;
+    .project-description.project-description-desktop {
+        display: none !important;
     }
 
-    .project-description-mobile {
-        display: block;
+    .project-description.project-description-mobile {
+        display: block !important;
     }
 }
 
